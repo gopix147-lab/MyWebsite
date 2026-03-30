@@ -9,16 +9,59 @@
         }
     });
 
-    // 2. Interactive Search Simulation with Modern UI States
-    function simulateSearch() {
-        const query = document.getElementById('tenderSearch').value;
-        const btnText = document.getElementById('btnText');
-        const searchBtn = document.getElementById('searchBtn');
+    // 2. YOUR GOOGLE CREDENTIALS
+const API_KEY = "AIzaSyCmu4s_7eAYxgBXJKvRQcLNOqBVHznZOSY";
+const CX_ID = "576c8c11804ec4b57";
 
-        if(!query) {
-            alert("Please enter a keyword to begin intelligence scanning.");
-            return;
+async function simulateSearch() {
+    const query = document.getElementById('tenderSearch').value;
+    const btnText = document.getElementById('btnText');
+    
+    if (!query) {
+        alert("Please enter a keyword to scan the engine.");
+        return;
+    }
+
+    // Change button state to show it's working
+    btnText.innerText = "Scanning...";
+    
+    try {
+        // 2. FETCH DATA FROM GOOGLE
+        const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CX_ID}&q=${query}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // 3. LOG DATA TO CONSOLE (To see if it's working)
+        console.log("Search Results:", data);
+
+        if (data.items) {
+            // Option A: Redirect to your results page with the query
+            // window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            
+            // Option B: Display them on this page (Example below)
+            displayResults(data.items);
+        } else {
+            alert("No results found. Try broader keywords.");
         }
+
+    } catch (error) {
+        console.error("Search Error:", error);
+        alert("Engine failed to scan. Check your API connection.");
+    } finally {
+        btnText.innerText = "Scan Engine";
+    }
+}
+
+// 4. FUNCTION TO RENDER RESULTS (Put this in script.js too)
+function displayResults(items) {
+    // Check if you have a results container, if not, let's alert the first result
+    // Usually, you'd create a <div> in your HTML with id="resultsList"
+    let message = "Found " + items.length + " tenders. Top result: \n\n" + items[0].title;
+    alert(message);
+    
+    // For a real professional site, you would use:
+    // document.getElementById('resultsList').innerHTML = items.map(item => `<div>${item.title}</div>`).join('');
+}
 
         // Processing State: Spinning Notch Icon
         btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Analyzing Portals...';
